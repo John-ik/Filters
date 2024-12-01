@@ -1,7 +1,6 @@
 #include "./../filters.h"
 #include <assert.h>
 
-#include <stdio.h>
 
 int main () {
     filter_result_t r;
