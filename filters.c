@@ -90,3 +90,39 @@ filter_data_t filter_median (filter_median_t* data, filter_data_t new_data){
         data->indx = 0;
     return data->buf[(filter_data_size_t)data->size / 2];
 }
+
+
+float filter_simple_kalman (filter_simple_kalman_t* data, float new_data){
+    float kalman_gain, current_estimate;
+    // first init err_estimate
+    if (data->err_estimate == 0) data->err_estimate = data->err_measure;
+
+    kalman_gain = (float)data->err_estimate / (data->err_estimate + data->err_measure);
+    current_estimate = data->last_estimate + (float)kalman_gain * (new_data - data->last_estimate);
+    data->err_estimate =  (1.0 - kalman_gain) * data->err_estimate + fabs(data->last_estimate - current_estimate) * data->q;
+    data->last_estimate = current_estimate;
+    return current_estimate;
+}
+
+
+filter_alpha_beta_t filter_alpha_beta_init (float delta, float sigma_process, float sigma_noise){
+    filter_alpha_beta_t data;
+    data.dt = delta;
+    float lambda = (float)sigma_process * data.dt * data.dt / sigma_noise;
+    float r = (4.0 + lambda - sqrt(8.0 * lambda + lambda * lambda)) / 4.0;
+    data.a = 1.0 - r * r;
+    data.b = 2.0 * (2.0 - data.a) - 4.0 * sqrt(1.0 - data.a);
+}
+
+
+float filter_alpha_beta (filter_alpha_beta_t* data, float new_data){
+    data->xm = new_data;
+    data->xk = data->xk_1 + (float)data->vk_1 * data->dt;
+    data->vk = data->vk_1;
+    data->rk = data->xm - data->xk;
+    data->xk += (float)data->a * data->rk;
+    data->vk += (float)data->b * data->rk / data->dt;
+    data->xk_1 = data->xk;
+    data->vk_1 = data->vk;
+    return data->xk_1;
+}

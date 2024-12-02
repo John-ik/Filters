@@ -90,4 +90,15 @@ int main () {
             r = filter_median(&f, i);
         assert(r == 8);
     }
+
+    // simple kalman
+    {
+        // configure err_measure, q
+        filter_simple_kalman_t f = {0.8, 0.1};
+    }
+
+    // AlphaBeta
+    {
+        filter_alpha_beta_t f = filter_alpha_beta_init(0.02, 3.0, 0.7);
+    }
 }
