@@ -1,6 +1,6 @@
 # Attention
 Initialize structs: `filter_avr_pull_t = {3}`  
-**Undefined behavior**: struct without initialize may contain unexpected values
+**Undefined behavior**: not initialized struct may lead to unexpected values
 
 # API
 All structs have docs for field that need to configure.
