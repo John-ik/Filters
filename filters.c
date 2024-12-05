@@ -106,12 +106,13 @@ float filter_simple_kalman (filter_simple_kalman_t* data, float new_data){
 
 
 filter_alpha_beta_t filter_alpha_beta_init (float delta, float sigma_process, float sigma_noise){
-    filter_alpha_beta_t data;
+    filter_alpha_beta_t data = {0};
     data.dt = delta;
     float lambda = (float)sigma_process * data.dt * data.dt / sigma_noise;
     float r = (4.0 + lambda - sqrt(8.0 * lambda + lambda * lambda)) / 4.0;
     data.a = 1.0 - r * r;
     data.b = 2.0 * (2.0 - data.a) - 4.0 * sqrt(1.0 - data.a);
+    return data;
 }
 
 
